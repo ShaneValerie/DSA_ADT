@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+} Node, *BST;
+
+Node *minNode(Node *root)
+{
+    while(root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+void insert(BST *T, int val)
+{
+    BST *trav = T;
+
+    while(*trav != NULL)
+        trav = (val < (*trav)->data) ? &(*trav)->left : &(*trav)->right;
+
+    *trav = (Node *)malloc(sizeof(Node));
+    (*trav)->data = val;
+    (*trav)->left = NULL;
+    (*trav)->right = NULL;
+}
+
+void deleteNode(BST *T, int val)
+{
+    if(*T == NULL)
+        return;
+
+    if(val < (*T)->data)
+        deleteNode(&(*T)->left, val);
+    else if(val > (*T)->data)
+        deleteNode(&(*T)->right, val);
+    else {
+        Node *temp;
+
+        if((*T)->left == NULL) {
+            temp = *T;
+            *T = (*T)->right;
+            free(temp);
+        }
+        else if((*T)->right == NULL) {
+            temp = *T;
+            *T = (*T)->left;
+            free(temp);
+        }
+        else {
+            temp = minNode((*T)->right);
+            (*T)->data = temp->data;
+            deleteNode(&(*T)->right, temp->data);
+        }
+    }
+}
+
+void inorder(BST T)
+{
+    if(T != NULL) {
+        inorder(T->left);
+        printf("%d ", T->data);
+        inorder(T->right);
+    }
+}
+
+int main()
+{
+    BST tree = NULL;
+
+    insert(&tree, 25);
+    insert(&tree, 15);
+    insert(&tree, 40);
+    insert(&tree, 10);
+    insert(&tree, 20);
+    insert(&tree, 30);
+    insert(&tree, 50);
+
+    printf("Inorder Traversal:\n");
+    inorder(tree);
+
+    printf("\n\nDeleting 25...\n");
+    deleteNode(&tree, 25);
+
+    printf("Tree after delete:\n");
+    inorder(tree);
+
+    printf("\n");
+    return 0;
+}

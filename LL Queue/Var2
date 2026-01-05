@@ -14,15 +14,10 @@ typedef struct Queue {
 
 Queue* initialize()
 {
-    Queue* q = (Queue*) malloc(sizeof(Queue));
+    Queue* q = (Queue*)malloc(sizeof(Queue));
     q->front = NULL;
     q->rear = NULL;
     return q;
-}
-
-bool isFull(Queue* q)
-{
-    return false;
 }
 
 bool isEmpty(Queue* q)
@@ -32,7 +27,7 @@ bool isEmpty(Queue* q)
 
 void enqueue(Queue* q, int value)
 {
-    Node* newNode = (Node*) malloc(sizeof(Node));
+    Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->data = value;
     newNode->next = NULL;
 
@@ -65,11 +60,6 @@ int frontVal(Queue* q)
 
 void display(Queue* q)
 {
-    if(isEmpty(q)) {
-        printf("Queue is empty!\n");
-        return;
-    }
-
     Node* curr = q->front;
     printf("Queue: [ ");
     while(curr != NULL) {
@@ -88,10 +78,14 @@ int main()
     enqueue(q, 30);
     display(q);
 
-    printf("Dequeued: %d\n", dequeue(q));
+    printf("%d dequeued\n", dequeue(q));
     display(q);
 
-    printf("Front: %d\n", frontVal(q));
+    printf("%d dequeued\n", dequeue(q));
+    display(q);
+
+    enqueue(q, 40);
+    display(q);
 
     return 0;
 }

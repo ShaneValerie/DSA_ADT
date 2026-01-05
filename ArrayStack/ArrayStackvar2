@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 10
+
+typedef struct {
+    int items[MAX];
+    int top;
+} Stack;
+
+Stack* initialize();
+bool isFull(Stack *S);
+bool isEmpty(Stack *S);
+void push(Stack *S, int value);
+int pop(Stack *S);
+int peek(Stack *S);
+int top(Stack *S);
+void display(Stack *S);
+
+int main() {
+    Stack *S = initialize();
+
+    push(S, 10);
+    push(S, 20);
+    push(S, 30);
+    push(S, 40);
+    push(S, 50);
+
+    printf("Initial Stack:\n");
+    display(S);
+
+    int removed = pop(S);
+    printf("\nRemoved value: %d\n", removed);
+
+    printf("Top value (peek): %d\n", peek(S));
+    printf("Top index: %d\n", top(S));
+
+    printf("\nCurrent Stack:\n");
+    display(S);
+
+    return 0;
+}
+
+
+Stack* initialize() {
+    Stack *S = (Stack*)malloc(sizeof(Stack));
+    S->top = MAX;
+    return S;
+}
+
+bool isFull(Stack *S) {
+    return S->top == 0;
+}
+
+bool isEmpty(Stack *S) {
+    return S->top == MAX;
+}
+
+void push(Stack *S, int value) {
+    if (isFull(S)) {
+        printf("Stack Overflow!\n");
+        exit(1);
+    }
+    S->top--;
+    S->items[S->top] = value;
+}
+
+int pop(Stack *S) {
+    if (isEmpty(S)) {
+        printf("Stack Underflow!\n");
+        exit(1);
+    }
+    int value = S->items[S->top];
+    S->top++;
+    return value;
+}
+
+int peek(Stack *S) {
+    if (isEmpty(S)) {
+        printf("Stack is empty!\n");
+        exit(1);
+    }
+    return S->items[S->top];
+}
+
+int top(Stack *S) {
+    return S->top;
+}
+
+void display(Stack *S) {
+    if (isEmpty(S)) {
+        printf("Stack is empty!\n");
+        return;
+    }
+
+    for (int i = S->top; i < MAX; i++) {
+        printf("%d\n", S->items[i]);
+        printf("------\n");
+    }
+}

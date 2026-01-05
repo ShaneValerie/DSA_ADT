@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 15
+
+typedef enum { FALSE, TRUE } Boolean;
+
+typedef struct treeNode {
+    int data;
+    struct treeNode *left;
+    struct treeNode *right;
+} treeType, *treePtr;
+
+Boolean initialize(treePtr *root);
+void insertSet(treePtr *root, int arr[]);
+Boolean isMember(treePtr root, int elem);
+void insertMember(treePtr *root, int elem);
+void inorderDisplay(treePtr root);
+void preorderDisplay(treePtr root);
+void postorderDisplay(treePtr root);
+void deleteMember(treePtr *root, int elem);
+
+int main() {
+    treePtr head;
+    int set[MAX] = {25, 40, 10, 60, 35, 5, 15, 50, 70, 65, 30, 45, 55, 20, 75};
+    int i, elem;
+    Boolean ans = TRUE;
+
+    printf("<< BEGIN >>\n\n");
+
+    printf("<< Initialize Tree >>\n");
+    initialize(&head);
+
+    printf("\n<< Insert Set Into Tree >>\n\tSet = { ");
+    for (i = 0; i < MAX; i++) {
+        printf("%d", set[i]);
+        if (i < MAX - 1) printf(", ");
+    }
+    printf(" }\n");
+
+    insertSet(&head, set);
+
+    printf("\n<< User Insert >>\n");
+    do {
+        printf("Insert element? (1-Yes / 0-No): ");
+        scanf("%d", &ans);
+
+        if (ans == TRUE) {
+            printf("Enter value: ");
+            scanf("%d", &elem);
+            insertMember(&head, elem);
+        }
+    } while (ans == TRUE);
+
+    printf("\n<< Tree Traversals >>\n");
+
+    printf("Inorder: ");
+    inorderDisplay(head);
+
+    printf("\nPreorder: ");
+    preorderDisplay(head);
+
+    printf("\nPostorder: ");
+    postorderDisplay(head);
+
+    printf("\n\n<< END >>\n");
+    return 0;
+}
+
+
+Boolean initialize(treePtr *root){
+    *root = NULL;
+    return TRUE;
+}
+
+void insertSet(treePtr *root, int arr[]){
+    for (int i = 0; i < MAX; i++) {
+        insertMember(root, arr[i]);
+    }
+}
+
+Boolean isMember(treePtr root, int elem){
+    while (root != NULL && root->data != elem) {
+        root = (elem < root->data) ? root->left : root->right;
+    }
+    return (root != NULL) ? TRUE : FALSE;
+}
+
+void insertMember(treePtr *root, int elem){
+    treePtr *trav = root;
+
+    if (isMember(*trav, elem)) {
+        printf("[%d] is NOT unique.\n", elem);
+        return;
+    }
+
+    printf("[%d] inserted.\n", elem);
+
+    while (*trav != NULL) {
+        trav = (elem < (*trav)->data) ? &(*trav)->left : &(*trav)->right;
+    }
+
+    *trav = (treePtr)malloc(sizeof(treeType));
+    (*trav)->data = elem;
+    (*trav)->left = NULL;
+    (*trav)->right = NULL;
+}
+
+void inorderDisplay(treePtr root){
+    if (root != NULL) {
+        inorderDisplay(root->left);
+        printf("[%d] ", root->data);
+        inorderDisplay(root->right);
+    }
+}
+
+void preorderDisplay(treePtr root){
+    if (root != NULL) {
+        printf("[%d] ", root->data);
+        preorderDisplay(root->left);
+        preorderDisplay(root->right);
+    }
+}
+
+void postorderDisplay(treePtr root){
+    if (root != NULL) {
+        postorderDisplay(root->left);
+        postorderDisplay(root->right);
+        printf("[%d] ", root->data);
+    }
+}
+
+void deleteMember(treePtr *root, int elem){
+    if (*root == NULL)
+        return;
+
+    if (elem < (*root)->data) {
+        deleteMember(&(*root)->left, elem);
+    }
+    else if (elem > (*root)->data) {
+        deleteMember(&(*root)->right, elem);
+    }
+    else {
+        treePtr temp;
+
+        if ((*root)->left == NULL && (*root)->right == NULL){
+            free(*root);
+            *root = NULL;
+        }
+        else if ((*root)->left == NULL){
+            temp = *root;
+            *root = (*root)->right;
+            free(temp);
+        }
+        else if ((*root)->right == NULL){
+            temp = *root;
+            *root = (*root)->left;
+            free(temp);
+        }
+        else {
+            treePtr succ = (*root)->right;
+            while (succ->left != NULL)
+                succ = succ->left;
+
+            (*root)->data = succ->data;
+            deleteMember(&(*root)->right, succ->data);
+        }
+    }
+}
